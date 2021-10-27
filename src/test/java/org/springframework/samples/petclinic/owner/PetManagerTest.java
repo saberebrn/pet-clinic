@@ -35,6 +35,7 @@ class PetManagerTest {
 		Integer testId = 5;
 		Owner mockOwner = mock(Owner.class);
 		mockOwner.setId(testId);
+		System.out.println("mockOwner ID is: " + mockOwner.getId());
 		when(this.ownerRepository.findById(testId)).thenReturn(mockOwner);
 		assertEquals(this.petManager.findOwner(testId) , mockOwner);
 	}
@@ -44,6 +45,7 @@ class PetManagerTest {
 		Integer testId = 7;
 		Owner mockOwner = mock(Owner.class);
 		mockOwner.setId(testId);
+		System.out.println("mockOwner ID is: " + mockOwner.getId());
 		when(this.ownerRepository.findById(testId)).thenReturn(mockOwner);
 		this.petManager.findOwner(testId);
 		verify(this.logger).info("find owner {}", testId);
@@ -54,6 +56,7 @@ class PetManagerTest {
 		Integer testId = 5; Integer wrongId = 15;
 		Owner mockOwner = mock(Owner.class);
 		mockOwner.setId(testId);
+		System.out.println("mockOwner ID is: " + mockOwner.getId());
 		when(this.ownerRepository.findById(testId)).thenReturn(mockOwner);
 		assertNotEquals(this.petManager.findOwner(wrongId) , mockOwner);
 	}
@@ -73,5 +76,34 @@ class PetManagerTest {
 		verify(this.logger).info("add pet for owner {}", ownerId);
 	}
 
-	
+	@Test
+	public void testFindPetExists(){
+		Integer testKey = 5;
+		Pet mockPet = mock(Pet.class);
+		mockPet.setId(testKey);
+		System.out.println("mockPet ID is: " + mockPet.getId());
+		when(this.petTimedCache.get(testKey)).thenReturn(mockPet);
+		assertEquals(this.petManager.findPet(testKey) , mockPet);
+	}
+
+	@Test
+	public void testFindPetLogger(){
+		Integer testKey = 5;
+		Pet mockPet = mock(Pet.class);
+		mockPet.setId(testKey);
+		System.out.println("mockPet ID is: " + mockPet.getId());
+		when(this.petTimedCache.get(testKey)).thenReturn(mockPet);
+		this.petManager.findPet(testKey);
+		verify(this.logger).info("find pet by id {}" , testKey);
+	}
+
+	@Test
+	public void testFindPetNotExists(){
+		Integer testKey = 5; Integer wrongKey = 10;
+		Pet mockPet = mock(Pet.class);
+		mockPet.setId(testKey);
+		System.out.println("mockPet ID is: " + mockPet.getId());
+		when(this.petTimedCache.get(testKey)).thenReturn(mockPet);
+		assertNotEquals(this.petManager.findPet(wrongKey) , mockPet);
+	}
 }
