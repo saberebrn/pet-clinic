@@ -9,6 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.samples.petclinic.utility.PetTimedCache;
 import org.springframework.samples.petclinic.utility.SimpleDI;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -153,5 +156,61 @@ class PetManagerTest {
 		verify(this.logger).info("save pet {}", mockPet.getId());
 	}
 
+	@Test
+	public void testGetOwnerPetsExists(){
+		int ownerId = 3;
+		Owner mockOwner = mock(Owner.class);
+		when(mockOwner.getId()).thenReturn(ownerId);
 
+		int numPets = 5;
+		List<Pet> mockPets = new ArrayList<>();
+		for(int i = 0 ; i < numPets ; i++){
+			mockPets.add(mock(Pet.class));
+		}
+
+		when(mockOwner.getPets()).thenReturn(mockPets);
+		when(this.ownerRepository.findById(ownerId)).thenReturn(mockOwner);
+
+		assertEquals(this.petManager.getOwnerPets(mockOwner.getId()) , mockPets);
+	}
+
+	@Test
+	public void testGetOwnerPetsExistsLogger(){
+		int ownerId = 3;
+		Owner mockOwner = mock(Owner.class);
+		when(mockOwner.getId()).thenReturn(ownerId);
+
+		int numPets = 5;
+		List<Pet> mockPets = new ArrayList<>();
+		for(int i = 0 ; i < numPets ; i++){
+			mockPets.add(mock(Pet.class));
+		}
+
+		when(mockOwner.getPets()).thenReturn(mockPets);
+		when(this.ownerRepository.findById(ownerId)).thenReturn(mockOwner);
+
+		this.petManager.getOwnerPets(mockOwner.getId());
+
+		verify(this.logger).info("finding the owner's pets by id {}", mockOwner.getId());
+	}
+
+	@Test
+	public void testGetOwnerPetsNotExists(){
+		int ownerId = 3; int wrongId = 7;
+		Owner mockOwner = mock(Owner.class);
+		when(mockOwner.getId()).thenReturn(ownerId);
+
+		int numPets = 5;
+		List<Pet> mockPets = new ArrayList<>();
+		for(int i = 0 ; i < numPets ; i++){
+			mockPets.add(mock(Pet.class));
+		}
+
+		when(mockOwner.getPets()).thenReturn(mockPets);
+		when(this.ownerRepository.findById(ownerId)).thenReturn(mockOwner);
+
+		assertThrows(NullPointerException.class , () -> {
+			this.petManager.getOwnerPets(wrongId);
+		});
+	}
 }
