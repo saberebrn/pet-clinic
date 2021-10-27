@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.samples.petclinic.utility.PetTimedCache;
 import org.springframework.samples.petclinic.utility.SimpleDI;
+import org.springframework.samples.petclinic.visit.Visit;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -287,5 +289,57 @@ class PetManagerTest {
 		this.petManager.getOwnerPetTypes(mockOwner.getId());
 
 		verify(this.logger).info("finding the owner's petTypes by id {}", ownerId);
+	}
+
+	@Test
+	public void testGetVisitsBetween(){
+		int year = 2021;
+		int monthStart = 10; int monthEnd = 10;
+		int dayStart = 15; int dayEnd = 25;
+
+		LocalDate dateStart = LocalDate.of(year , monthStart , dayStart);
+		LocalDate dateEnd = LocalDate.of(year , monthEnd , dayEnd);
+
+		int petId = 7;
+		Pet mockPet = mock(Pet.class);
+		when(mockPet.getId()).thenReturn(petId);
+
+		List<Visit> mockVisits = new ArrayList<>();
+		int numVisits = 5;
+		for(int i = 0 ; i < numVisits ; i++){
+			mockVisits.add(mock(Visit.class));
+		}
+
+		when(mockPet.getVisitsBetween(dateStart , dateEnd)).thenReturn(mockVisits);
+		when(this.petTimedCache.get(petId)).thenReturn(mockPet);
+
+		assertEquals(this.petManager.getVisitsBetween(mockPet.getId() , dateStart , dateEnd) , mockVisits);
+	}
+
+	@Test
+	public void testGetVisitsBetweenLogger(){
+		int year = 2021;
+		int monthStart = 10; int monthEnd = 10;
+		int dayStart = 15; int dayEnd = 25;
+
+		LocalDate dateStart = LocalDate.of(year , monthStart , dayStart);
+		LocalDate dateEnd = LocalDate.of(year , monthEnd , dayEnd);
+
+		int petId = 7;
+		Pet mockPet = mock(Pet.class);
+		when(mockPet.getId()).thenReturn(petId);
+
+		List<Visit> mockVisits = new ArrayList<>();
+		int numVisits = 5;
+		for(int i = 0 ; i < numVisits ; i++){
+			mockVisits.add(mock(Visit.class));
+		}
+
+		when(mockPet.getVisitsBetween(dateStart , dateEnd)).thenReturn(mockVisits);
+		when(this.petTimedCache.get(petId)).thenReturn(mockPet);
+
+		this.petManager.getVisitsBetween(mockPet.getId() , dateStart , dateEnd);
+
+		verify(this.logger).info("get visits for pet {} from {} since {}", petId, dateStart, dateEnd);
 	}
 }
