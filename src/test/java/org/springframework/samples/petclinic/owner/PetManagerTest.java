@@ -57,4 +57,21 @@ class PetManagerTest {
 		when(this.ownerRepository.findById(testId)).thenReturn(mockOwner);
 		assertNotEquals(this.petManager.findOwner(wrongId) , mockOwner);
 	}
+
+	@Test
+	public void testNewPetAdded(){
+		Owner spyOwner = spy(Owner.class);
+		this.petManager.newPet(spyOwner);
+		verify(spyOwner).addPet(any(Pet.class));
+	}
+
+	@Test
+	public void testNewPetLogger(){
+		Owner spyOwner = spy(Owner.class);
+		Integer ownerId = spyOwner.getId();
+		this.petManager.newPet(spyOwner);
+		verify(this.logger).info("add pet for owner {}", ownerId);
+	}
+
+	
 }
