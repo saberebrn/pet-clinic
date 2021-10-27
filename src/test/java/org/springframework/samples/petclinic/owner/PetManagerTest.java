@@ -239,6 +239,7 @@ class PetManagerTest {
 		when(this.ownerRepository.findById(ownerId)).thenReturn(mockOwner);
 
 		assertEquals(this.petManager.getOwnerPets(mockOwner.getId()) , mockPets);
+		assertEquals(this.petManager.getOwnerPets(mockOwner.getId()).size() , numPets);
 	}
 
 	/*
@@ -317,6 +318,7 @@ class PetManagerTest {
 		when(this.ownerRepository.findById(ownerId)).thenReturn(mockOwner);
 
 		assertEquals(this.petManager.getOwnerPetTypes(mockOwner.getId()) , mockPetTypes);
+		assertEquals(this.petManager.getOwnerPetTypes(mockOwner.getId()).size() , numPets);
 	}
 
 	/*
@@ -407,6 +409,7 @@ class PetManagerTest {
 		when(this.petTimedCache.get(petId)).thenReturn(mockPet);
 
 		assertEquals(this.petManager.getVisitsBetween(mockPet.getId() , dateStart , dateEnd) , mockVisits);
+		assertEquals(this.petManager.getVisitsBetween(mockPet.getId() , dateStart , dateEnd).size() , numVisits);
 	}
 
 	/*
