@@ -34,9 +34,12 @@ class PetManagerTest {
 	public void testFindOwnerExists(){
 		Integer testId = 5;
 		Owner mockOwner = mock(Owner.class);
-		mockOwner.setId(testId);
+
+		when(mockOwner.getId()).thenReturn(testId);
 		System.out.println("mockOwner ID is: " + mockOwner.getId());
+
 		when(this.ownerRepository.findById(testId)).thenReturn(mockOwner);
+
 		assertEquals(this.petManager.findOwner(testId) , mockOwner);
 	}
 
@@ -44,10 +47,13 @@ class PetManagerTest {
 	public void testFindOwnerExistsLogger(){
 		Integer testId = 7;
 		Owner mockOwner = mock(Owner.class);
-		mockOwner.setId(testId);
+
+		when(mockOwner.getId()).thenReturn(testId);
 		System.out.println("mockOwner ID is: " + mockOwner.getId());
+
 		when(this.ownerRepository.findById(testId)).thenReturn(mockOwner);
 		this.petManager.findOwner(testId);
+
 		verify(this.logger).info("find owner {}", testId);
 	}
 
@@ -55,9 +61,12 @@ class PetManagerTest {
 	public void testFindOwnerNotExists(){
 		Integer testId = 5; Integer wrongId = 15;
 		Owner mockOwner = mock(Owner.class);
-		mockOwner.setId(testId);
+
+		when(mockOwner.getId()).thenReturn(testId);
 		System.out.println("mockOwner ID is: " + mockOwner.getId());
+
 		when(this.ownerRepository.findById(testId)).thenReturn(mockOwner);
+
 		assertNotEquals(this.petManager.findOwner(wrongId) , mockOwner);
 	}
 
@@ -65,6 +74,7 @@ class PetManagerTest {
 	public void testNewPetAdded(){
 		Owner spyOwner = spy(Owner.class);
 		this.petManager.newPet(spyOwner);
+
 		verify(spyOwner).addPet(any(Pet.class));
 	}
 
@@ -72,7 +82,9 @@ class PetManagerTest {
 	public void testNewPetLogger(){
 		Owner spyOwner = spy(Owner.class);
 		Integer ownerId = spyOwner.getId();
+
 		this.petManager.newPet(spyOwner);
+
 		verify(this.logger).info("add pet for owner {}", ownerId);
 	}
 
@@ -80,9 +92,12 @@ class PetManagerTest {
 	public void testFindPetExists(){
 		Integer testKey = 5;
 		Pet mockPet = mock(Pet.class);
-		mockPet.setId(testKey);
+
+		when(mockPet.getId()).thenReturn(testKey);
 		System.out.println("mockPet ID is: " + mockPet.getId());
+
 		when(this.petTimedCache.get(testKey)).thenReturn(mockPet);
+
 		assertEquals(this.petManager.findPet(testKey) , mockPet);
 	}
 
@@ -90,10 +105,13 @@ class PetManagerTest {
 	public void testFindPetLogger(){
 		Integer testKey = 5;
 		Pet mockPet = mock(Pet.class);
-		mockPet.setId(testKey);
+
+		when(mockPet.getId()).thenReturn(testKey);
 		System.out.println("mockPet ID is: " + mockPet.getId());
+
 		when(this.petTimedCache.get(testKey)).thenReturn(mockPet);
 		this.petManager.findPet(testKey);
+
 		verify(this.logger).info("find pet by id {}" , testKey);
 	}
 
@@ -101,9 +119,39 @@ class PetManagerTest {
 	public void testFindPetNotExists(){
 		Integer testKey = 5; Integer wrongKey = 10;
 		Pet mockPet = mock(Pet.class);
-		mockPet.setId(testKey);
+
+		when(mockPet.getId()).thenReturn(testKey);
 		System.out.println("mockPet ID is: " + mockPet.getId());
+
 		when(this.petTimedCache.get(testKey)).thenReturn(mockPet);
+
 		assertNotEquals(this.petManager.findPet(wrongKey) , mockPet);
 	}
+
+	@Test
+	public void testSavePet(){
+		Pet mockPet = mock(Pet.class);
+		Owner spyOwner = spy(Owner.class);
+
+		this.petManager.savePet(mockPet , spyOwner);
+
+		verify(this.petTimedCache).save(mockPet);
+		verify(spyOwner).addPet(mockPet);
+	}
+
+	@Test
+	public void testSavePetLogger(){
+		Integer testId = 5;
+		Pet mockPet = mock(Pet.class);
+		Owner spyOwner = spy(Owner.class);
+
+		when(mockPet.getId()).thenReturn(testId);
+		System.out.println("mockPet ID is: " + mockPet.getId());
+
+		this.petManager.savePet(mockPet , spyOwner);
+
+		verify(this.logger).info("save pet {}", mockPet.getId());
+	}
+
+
 }
