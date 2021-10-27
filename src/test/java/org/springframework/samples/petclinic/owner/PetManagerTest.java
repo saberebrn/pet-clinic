@@ -10,7 +10,9 @@ import org.springframework.samples.petclinic.utility.PetTimedCache;
 import org.springframework.samples.petclinic.utility.SimpleDI;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -212,5 +214,78 @@ class PetManagerTest {
 		assertThrows(NullPointerException.class , () -> {
 			this.petManager.getOwnerPets(wrongId);
 		});
+	}
+
+	@Test
+	public void testGetOwnerPetTypesExists(){
+		int ownerId = 3;
+		Owner mockOwner = mock(Owner.class);
+		when(mockOwner.getId()).thenReturn(ownerId);
+
+		int numPets = 5;
+		List<Pet> mockPets = new ArrayList<>();
+		Set<PetType> mockPetTypes = new HashSet<>();
+		for(int i = 0 ; i < numPets ; i++){
+			Pet mockPet = mock(Pet.class);
+			PetType mockPetType = mock(PetType.class);
+			when(mockPet.getType()).thenReturn(mockPetType);
+			mockPets.add(mockPet);
+			mockPetTypes.add(mockPetType);
+		}
+
+		when(mockOwner.getPets()).thenReturn(mockPets);
+		when(this.ownerRepository.findById(ownerId)).thenReturn(mockOwner);
+
+		assertEquals(this.petManager.getOwnerPetTypes(mockOwner.getId()) , mockPetTypes);
+	}
+
+	@Test
+	public void testGetOwnerPetTypesNotExists(){
+		int ownerId = 3; int wrongId = 7;
+		Owner mockOwner = mock(Owner.class);
+		when(mockOwner.getId()).thenReturn(ownerId);
+
+		int numPets = 5;
+		List<Pet> mockPets = new ArrayList<>();
+		Set<PetType> mockPetTypes = new HashSet<>();
+		for(int i = 0 ; i < numPets ; i++){
+			Pet mockPet = mock(Pet.class);
+			PetType mockPetType = mock(PetType.class);
+			when(mockPet.getType()).thenReturn(mockPetType);
+			mockPets.add(mockPet);
+			mockPetTypes.add(mockPetType);
+		}
+
+		when(mockOwner.getPets()).thenReturn(mockPets);
+		when(this.ownerRepository.findById(ownerId)).thenReturn(mockOwner);
+
+		assertThrows(NullPointerException.class , () -> {
+			this.petManager.getOwnerPetTypes(wrongId);
+		});
+	}
+
+	@Test
+	public void testGetOwnerPetTypesExistsLogger(){
+		int ownerId = 3;
+		Owner mockOwner = mock(Owner.class);
+		when(mockOwner.getId()).thenReturn(ownerId);
+
+		int numPets = 5;
+		List<Pet> mockPets = new ArrayList<>();
+		Set<PetType> mockPetTypes = new HashSet<>();
+		for(int i = 0 ; i < numPets ; i++){
+			Pet mockPet = mock(Pet.class);
+			PetType mockPetType = mock(PetType.class);
+			when(mockPet.getType()).thenReturn(mockPetType);
+			mockPets.add(mockPet);
+			mockPetTypes.add(mockPetType);
+		}
+
+		when(mockOwner.getPets()).thenReturn(mockPets);
+		when(this.ownerRepository.findById(ownerId)).thenReturn(mockOwner);
+
+		this.petManager.getOwnerPetTypes(mockOwner.getId());
+
+		verify(this.logger).info("finding the owner's petTypes by id {}", ownerId);
 	}
 }
