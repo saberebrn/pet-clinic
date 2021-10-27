@@ -20,6 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class PetManagerTest {
+	/*
+		1. Model
+		2. Verification Type
+		3. Test Approach
+	*/
+
 	private PetManager petManager;
 
 	@Mock
@@ -37,6 +43,11 @@ class PetManagerTest {
 	}
 
 
+	/*
+		1. Mock , Stub
+		2. State Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testFindOwnerExists(){
 		Integer testId = 5;
@@ -50,6 +61,11 @@ class PetManagerTest {
 		assertEquals(this.petManager.findOwner(testId) , mockOwner);
 	}
 
+	/*
+		1. Mock , stub
+		2. Behavior Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testFindOwnerExistsLogger(){
 		Integer testId = 7;
@@ -64,6 +80,11 @@ class PetManagerTest {
 		verify(this.logger).info("find owner {}", testId);
 	}
 
+	/*
+		1. Mock , Stub
+		2. State Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testFindOwnerNotExists(){
 		Integer testId = 5; Integer wrongId = 15;
@@ -77,14 +98,26 @@ class PetManagerTest {
 		assertNotEquals(this.petManager.findOwner(wrongId) , mockOwner);
 	}
 
+	/*
+		1. Spy
+		2. Behavior Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testNewPetAdded(){
+		int numTimes = 0;
 		Owner spyOwner = spy(Owner.class);
 		this.petManager.newPet(spyOwner);
 
 		verify(spyOwner).addPet(any(Pet.class));
+		verify(spyOwner , times(numTimes)).removePet(any(Pet.class));
 	}
 
+	/*
+		1. Spy
+		2. Behavior Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testNewPetLogger(){
 		Owner spyOwner = spy(Owner.class);
@@ -95,6 +128,11 @@ class PetManagerTest {
 		verify(this.logger).info("add pet for owner {}", ownerId);
 	}
 
+	/*
+		1. Mock , Stub
+		2. State Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testFindPetExists(){
 		Integer testKey = 5;
@@ -108,6 +146,11 @@ class PetManagerTest {
 		assertEquals(this.petManager.findPet(testKey) , mockPet);
 	}
 
+	/*
+		1. Mock , Stub
+		2. Behavior Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testFindPetLogger(){
 		Integer testKey = 5;
@@ -122,6 +165,11 @@ class PetManagerTest {
 		verify(this.logger).info("find pet by id {}" , testKey);
 	}
 
+	/*
+		1. Mock , Stub
+		2. State Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testFindPetNotExists(){
 		Integer testKey = 5; Integer wrongKey = 10;
@@ -135,6 +183,11 @@ class PetManagerTest {
 		assertNotEquals(this.petManager.findPet(wrongKey) , mockPet);
 	}
 
+	/*
+		1. Spy , Mock
+		2. Behavior Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testSavePet(){
 		Pet mockPet = mock(Pet.class);
@@ -146,6 +199,11 @@ class PetManagerTest {
 		verify(spyOwner).addPet(mockPet);
 	}
 
+	/*
+		1. Spy , Mock , Stub
+		2. Behavior Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testSavePetLogger(){
 		Integer testId = 5;
@@ -160,6 +218,11 @@ class PetManagerTest {
 		verify(this.logger).info("save pet {}", mockPet.getId());
 	}
 
+	/*
+		1. Mock , Stub
+		2. State Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testGetOwnerPetsExists(){
 		int ownerId = 3;
@@ -178,6 +241,11 @@ class PetManagerTest {
 		assertEquals(this.petManager.getOwnerPets(mockOwner.getId()) , mockPets);
 	}
 
+	/*
+		1. Mock , Stub
+		2. Behavior Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testGetOwnerPetsExistsLogger(){
 		int ownerId = 3;
@@ -198,6 +266,11 @@ class PetManagerTest {
 		verify(this.logger).info("finding the owner's pets by id {}", mockOwner.getId());
 	}
 
+	/*
+		1. Mock , Stub
+		2. State Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testGetOwnerPetsNotExists(){
 		int ownerId = 3; int wrongId = 7;
@@ -218,6 +291,11 @@ class PetManagerTest {
 		});
 	}
 
+	/*
+		1. Mock , Stub
+		2. State Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testGetOwnerPetTypesExists(){
 		int ownerId = 3;
@@ -241,6 +319,11 @@ class PetManagerTest {
 		assertEquals(this.petManager.getOwnerPetTypes(mockOwner.getId()) , mockPetTypes);
 	}
 
+	/*
+		1. Mock , Stub
+		2. State Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testGetOwnerPetTypesNotExists(){
 		int ownerId = 3; int wrongId = 7;
@@ -266,6 +349,11 @@ class PetManagerTest {
 		});
 	}
 
+	/*
+		1. Mock , Stub
+		2. Behavior Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testGetOwnerPetTypesExistsLogger(){
 		int ownerId = 3;
@@ -291,6 +379,11 @@ class PetManagerTest {
 		verify(this.logger).info("finding the owner's petTypes by id {}", ownerId);
 	}
 
+	/*
+		1. Mock , Stub
+		2. State Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testGetVisitsBetween(){
 		int year = 2021;
@@ -316,6 +409,11 @@ class PetManagerTest {
 		assertEquals(this.petManager.getVisitsBetween(mockPet.getId() , dateStart , dateEnd) , mockVisits);
 	}
 
+	/*
+		1. Mock , Stub
+		2. Behavior Verification
+		3. Mockisty
+	*/
 	@Test
 	public void testGetVisitsBetweenLogger(){
 		int year = 2021;
