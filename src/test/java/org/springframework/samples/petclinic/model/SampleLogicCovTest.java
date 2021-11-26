@@ -26,7 +26,7 @@ class SampleLogicCovTest  {
 
 	@UniqueTruePoint(
 		predicate = "a(b + cd)",
-		dnf = "ab + acd",
+		cnf = "ab + acd",
 		implicant = "ab",
 		valuations = {
 			@Valuation(clause = 'a', valuation = true),
