@@ -54,6 +54,7 @@ class PetControllerTests {
 
 		this.pet.setId(this.petId);
 		this.pet.setName("Monkey");
+		this.pet.setBirthDate(LocalDate.now());
 
 		List<PetType> petTypeList = new ArrayList<>();
 		petTypeList.add(this.petType);
@@ -136,6 +137,53 @@ class PetControllerTests {
 					.andExpect(view().name(viewName))
 					.andExpect(model().attributeExists(attributeName))
 					.andExpect(content().contentType(contentType));
+	}
+
+	@Test
+	public void testProcessUpdateForm() throws Exception {
+		String address = "/owners/" + this.ownerId + "/pets/" + this.petId + "/edit";
+		String redirectAddress = "redirect:/owners/{ownerId}";
+		String name = "Fatemeh" , type = "Parrot";
+		this.mockMVC.perform
+					(
+						post(address)
+						.param("name", name)
+						.param("type", type)
+						.param("birthDate", LocalDate.now().toString())
+					)
+					.andExpect(status().is3xxRedirection())
+					.andExpect(view().name(redirectAddress));
+	}
+
+	@Test
+	public void testProcessUpdateIncompleteForm() throws Exception {
+		String address = "/owners/" + this.ownerId + "/pets/" + this.petId + "/edit";
+		String name = "Fatemeh", viewName = "pets/createOrUpdatePetForm";
+		this.mockMVC.perform
+					(
+						post(address)
+						.param("name", name)
+					)
+					.andExpect(status().isOk())
+					.andExpect(view().name(viewName))
+					.andExpect(model().hasErrors());
+	}
+
+	@Test
+	public void testProcessUpdateFormWrongParam() throws Exception {
+		String address = "/owners/" + this.ownerId + "/pets/" + this.petId + "/edit";
+		String name = "Fatemeh", viewName = "pets/createOrUpdatePetForm", testText = "TEST";
+		this.mockMVC.perform
+					(
+						post(address)
+						.param("name", name)
+						.param("birthDate", LocalDate.now().toString())
+						.param("test", testText)
+					)
+					.andExpect(status().isOk())
+					.andExpect(view().name(viewName))
+					.andExpect(model().hasErrors());
+
 	}
 
 	@AfterEach
