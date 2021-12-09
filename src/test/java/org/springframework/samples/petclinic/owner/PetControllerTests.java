@@ -124,6 +124,20 @@ class PetControllerTests {
 					.andExpect(model().hasErrors());
 	}
 
+	@Test
+	public void testInitialUpdateForm() throws Exception {
+		String address = "/owners/" + this.ownerId + "/pets/" + this.petId + "/edit";
+		String viewName = "pets/createOrUpdatePetForm", attributeName = "pet", contentType = "text/html;charset=UTF-8";
+		this.mockMVC.perform
+					(
+						get(address)
+					)
+					.andExpect(status().isOk())
+					.andExpect(view().name(viewName))
+					.andExpect(model().attributeExists(attributeName))
+					.andExpect(content().contentType(contentType));
+	}
+
 	@AfterEach
 	void teardownTest(){
 		this.owner = null;
