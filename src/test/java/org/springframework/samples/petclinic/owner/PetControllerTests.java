@@ -11,6 +11,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.samples.petclinic.utility.PetTimedCache;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,11 +67,61 @@ class PetControllerTests {
 	public void testInitialCreationFrom() throws Exception {
 		String address = "/owners/" + this.ownerId + "/pets/new";
 		String attributeName = "pet", viewName = "pets/createOrUpdatePetForm", contentType = "text/html;charset=UTF-8";
-		this.mockMVC.perform(get(address))
+		this.mockMVC.perform
+					(
+						get(address)
+					)
 			   		.andExpect(status().isOk())
 			   		.andExpect(model().attributeExists(attributeName))
 			   		.andExpect(view().name(viewName))
 			   		.andExpect(content().contentType(contentType));
+	}
+
+	@Test
+	public void testProcessCreationForm() throws Exception {
+		String address = "/owners/" + this.ownerId + "/pets/new";
+		String redirectAddress = "redirect:/owners/{ownerId}";
+		String name = "Fatemeh" , type = "Parrot";
+		this.mockMVC.perform
+					(
+						post(address)
+						.param("name", name)
+						.param("type", type)
+						.param("birthDate", LocalDate.now().toString())
+					)
+					.andExpect(status().is3xxRedirection())
+					.andExpect(view().name(redirectAddress));
+	}
+
+	@Test
+	public void testProcessCreationIncompleteForm() throws Exception {
+		String address = "/owners/" + this.ownerId + "/pets/new";
+		String name = "Fatemeh", viewName = "pets/createOrUpdatePetForm";
+		this.mockMVC.perform
+					(
+						post(address)
+						.param("name", name)
+						.param("birthDate", LocalDate.now().toString())
+					)
+					.andExpect(status().isOk())
+					.andExpect(view().name(viewName))
+					.andExpect(model().hasErrors());
+	}
+
+	@Test
+	public void testProcessCreationFormWrongParam() throws Exception {
+		String address = "/owners/" + this.ownerId + "/pets/new";
+		String name = "Fatemeh", viewName = "pets/createOrUpdatePetForm", testText = "TEST";
+		this.mockMVC.perform
+					(
+						post(address)
+						.param("name", name)
+						.param("birthDate", LocalDate.now().toString())
+						.param("test" , testText)
+					)
+					.andExpect(status().isOk())
+					.andExpect(view().name(viewName))
+					.andExpect(model().hasErrors());
 	}
 
 	@AfterEach
