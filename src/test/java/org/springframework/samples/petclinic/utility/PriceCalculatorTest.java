@@ -4,21 +4,25 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.samples.petclinic.owner.Pet;
+import org.springframework.samples.petclinic.visit.Visit;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PriceCalculatorTest {
 
-	private Pet infantPet = mock(Pet.class);
-	private Pet grownUpPet = mock(Pet.class);
+	private static Pet infantPet = mock(Pet.class);
+	private static Pet grownUpPet = mock(Pet.class);
+	private static Visit mockVisit = mock(Visit.class);
+	private static int yearsBackForGrownUp = 5;
+	private static int yearsBackForOldVisit = 3;
+	private static double basePricePerPet = 100;
+	private static double baseCharge = 1;
 	private ArrayList<Pet> pets;
-	private int yearsBackForGrownUp = 5;
-	private double basePricePerPet = 2;
-	private double baseCharge = 1;
 
 	@BeforeEach
 	private void setup(){
@@ -35,7 +39,7 @@ public class PriceCalculatorTest {
 		for(int i = 0; i < 3; i++){
 			this.pets.add(this.infantPet);
 		}
-		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 10.08);
+		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 504);
 	}
 
 	@Test
@@ -44,7 +48,7 @@ public class PriceCalculatorTest {
 		for(int i = 0; i < 3; i++){
 			this.pets.add(this.grownUpPet);
 		}
-		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 7.2, 0.00001);
+		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 360);
 	}
 
 	@Test
@@ -53,7 +57,7 @@ public class PriceCalculatorTest {
 		when(this.infantPet.getBirthDate()).thenReturn(LocalDate.now().minusYears(boundaryYear));
 		when(this.infantPet.getVisitsUntilAge(boundaryYear)).thenReturn(new ArrayList<>());
 		this.pets.add(this.infantPet);
-		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 3.36);
+		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 168);
 	}
 
 	@Test
@@ -63,7 +67,7 @@ public class PriceCalculatorTest {
 		for(int i = 0; i < 6; i++){
 			this.pets.add(this.infantPet);
 		}
-		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 66.84);
+		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 3195);
 	}
 
 	@Test
@@ -73,7 +77,36 @@ public class PriceCalculatorTest {
 		for(int i = 0; i < 5; i++){
 			this.pets.add(this.infantPet);
 		}
-		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 31.24);
+		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 1513);
+	}
+
+	@Test
+	public void calcPriceOldVisitTest(){
+		when(this.mockVisit.getDate()).thenReturn(LocalDate.now().minusYears(this.yearsBackForOldVisit));
+
+		List<Visit> grownUpPetVisit = new ArrayList<>();
+		grownUpPetVisit.add(this.mockVisit);
+
+		when(this.grownUpPet.getVisitsUntilAge(this.yearsBackForGrownUp)).thenReturn(grownUpPetVisit);
+		for(int i = 0; i < 10; i++){
+			this.pets.add(this.grownUpPet);
+		}
+		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 12011);
+	}
+
+	@Test
+	public void calcPriceBoundaryVisitTest(){
+		int boundaryDays = 100;
+		when(this.mockVisit.getDate()).thenReturn(LocalDate.now().minusDays(boundaryDays));
+
+		List<Visit> grownUpPetVisit = new ArrayList<>();
+		grownUpPetVisit.add(this.mockVisit);
+
+		when(this.grownUpPet.getVisitsUntilAge(this.yearsBackForGrownUp)).thenReturn(grownUpPetVisit);
+		for(int i = 0; i < 10; i++){
+			this.pets.add(this.grownUpPet);
+		}
+		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 2282);
 	}
 
 	@AfterEach
