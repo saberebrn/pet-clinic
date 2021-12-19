@@ -29,7 +29,7 @@ public class PriceCalculatorTest {
 
 
 	@Test
-	public void calcPriceInfantsNoVisit(){
+	public void calcPriceInfantsNoVisitTest(){
 		int newBornYear = 0;
 		when(this.infantPet.getVisitsUntilAge(newBornYear)).thenReturn(new ArrayList<>());
 		for(int i = 0; i < 3; i++){
@@ -39,7 +39,7 @@ public class PriceCalculatorTest {
 	}
 
 	@Test
-	public void calcPriceGrownUpsNoVisit(){
+	public void calcPriceGrownUpsNoVisitTest(){
 		when(this.grownUpPet.getVisitsUntilAge(this.yearsBackForGrownUp)).thenReturn(new ArrayList<>());
 		for(int i = 0; i < 3; i++){
 			this.pets.add(this.grownUpPet);
@@ -48,7 +48,7 @@ public class PriceCalculatorTest {
 	}
 
 	@Test
-	public void calcPriceBoundaryInfantsNoVisit(){
+	public void calcPriceBoundaryInfantsNoVisitTest(){
 		int boundaryYear = 2;
 		when(this.infantPet.getBirthDate()).thenReturn(LocalDate.now().minusYears(boundaryYear));
 		when(this.infantPet.getVisitsUntilAge(boundaryYear)).thenReturn(new ArrayList<>());
@@ -56,6 +56,25 @@ public class PriceCalculatorTest {
 		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 3.36);
 	}
 
+	@Test
+	public void calcPriceInfantsNoVisitWithDiscountTest(){
+		int newBornYear = 0;
+		when(this.infantPet.getVisitsUntilAge(newBornYear)).thenReturn(new ArrayList<>());
+		for(int i = 0; i < 6; i++){
+			this.pets.add(this.infantPet);
+		}
+		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 66.84);
+	}
+
+	@Test
+	public void calcPriceInfantsNoVisitWithDiscountBoundaryTest(){
+		int newBornYear = 0;
+		when(this.infantPet.getVisitsUntilAge(newBornYear)).thenReturn(new ArrayList<>());
+		for(int i = 0; i < 5; i++){
+			this.pets.add(this.infantPet);
+		}
+		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 31.24);
+	}
 
 	@AfterEach
 	private void teardown(){
