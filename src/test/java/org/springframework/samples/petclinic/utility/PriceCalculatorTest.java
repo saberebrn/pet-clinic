@@ -109,6 +109,15 @@ public class PriceCalculatorTest {
 		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet), 2282);
 	}
 
+	@Test
+	public void calcPriceBoundaryInfantsNoVisitAdditionalTest(){
+		int boundaryYear = 2;
+		when(this.infantPet.getBirthDate()).thenReturn(LocalDate.now().minusYears(boundaryYear));
+		when(this.infantPet.getVisitsUntilAge(boundaryYear)).thenReturn(new ArrayList<>());
+		this.pets.add(this.infantPet);
+		assertEquals(PriceCalculator.calcPrice(this.pets, this.baseCharge, this.basePricePerPet / 50), 3.36);
+	}
+
 	@AfterEach
 	private void teardown(){
 		this.pets = null;
