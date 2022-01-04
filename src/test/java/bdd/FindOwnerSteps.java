@@ -17,12 +17,6 @@ public class FindOwnerSteps {
 	@Autowired
 	OwnerRepository ownerRepository;
 
-	@Autowired
-	PetRepository petRepository;
-
-	@Autowired
-	PetTypeRepository petTypeRepository;
-
 	private Owner owner;
 	private Integer ownerID;
 	private Integer differentID;
