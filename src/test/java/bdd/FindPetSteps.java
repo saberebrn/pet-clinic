@@ -50,7 +50,7 @@ public class FindPetSteps {
 	public void thereIsOneNamedPet(String petName) {
 		this.pet = new Pet();
 		this.pet.setName(petName);
-		this.pet.setType(petType);
+		this.pet.setType(this.petType);
 		this.owner.addPet(this.pet);
 		this.petRepository.save(this.pet);
 
